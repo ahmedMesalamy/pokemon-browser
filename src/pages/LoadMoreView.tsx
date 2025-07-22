@@ -1,15 +1,80 @@
 import { useEffect, useState } from 'react'
 import { fetchPokemonList } from '../api/pokemon'
 import PokemonCard from '../components/PokemonCard'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 const ITEMS_PER_PAGE = 10
 
-const LoadMoreView = () => {
+type Props = {
+  setViewMode: (mode: "pagination" | "infinite") => void;
+};
+const Container = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #e0f0ff, #ffffff);
+  padding: 3rem 1rem;
+`
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 1rem;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+`;
+
+const StyledButton = styled.button`
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+  border: none;
+
+  &:hover {
+    background-color: #2563eb;
+  }
+
+  &:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorBox = styled.div`
+  text-align: center;
+  color: #dc2626;
+  margin-bottom: 1rem;
+`;
+
+const LoadMoreView = ({ setViewMode }: Props) => {
   const [pokemonData, setPokemonData] = useState<any[]>([])
   const [offset, setOffset] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
+
+  const navigate = useNavigate()
+
+  const handleSwitch = () => {
+    setViewMode("pagination")
+    navigate("/pagination")
+  }
 
   const loadMore = async () => {
     setLoading(true)
@@ -34,7 +99,6 @@ const LoadMoreView = () => {
         })
       )
 
-      // Avoid duplicates
       setPokemonData((prev) => [
         ...prev,
         ...enriched.filter(
@@ -50,45 +114,42 @@ const LoadMoreView = () => {
     }
   }
 
-  // Initial fetch
   useEffect(() => {
     if (pokemonData.length === 0) loadMore()
   }, [])
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Load More View</h1>
+    <Container>
+    <div className="p-4 max-w-7xl mx-auto">
 
       {error && (
-        <div className="text-center text-red-500 mb-4">
+        <ErrorBox>
           <p>{error}</p>
-          <button
-            onClick={loadMore}
-            className="mt-2 px-4 py-1 bg-red-100 rounded"
-          >
-            Retry
-          </button>
-        </div>
+          <StyledButton onClick={loadMore}>Retry</StyledButton>
+        </ErrorBox>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <ButtonGroup>
+        <StyledButton onClick={handleSwitch}>
+          Switch to Pagination
+        </StyledButton>
+      </ButtonGroup>
+
+      <Grid>
         {pokemonData.map((pokemon) => (
           <PokemonCard key={pokemon.name} {...pokemon} />
         ))}
-      </div>
+      </Grid>
 
       {hasMore && (
         <div className="flex justify-center mt-6">
-          <button
-            onClick={loadMore}
-            disabled={loading}
-            className="px-6 py-2 bg-gray-300 rounded hover:bg-gray-400 transition disabled:opacity-50"
-          >
-            {loading ? 'Loading...' : 'Load More'}
-          </button>
+          <StyledButton onClick={loadMore} disabled={loading}>
+            {loading ? 'Loading…' : 'Load More'}
+          </StyledButton>
         </div>
       )}
     </div>
+    </Container>
   )
 }
 

@@ -3,7 +3,9 @@ import { fetchPokemonList } from '../api/pokemon'
 import PokemonCard from '../components/PokemonCard'
 import styled from 'styled-components'
 
+import { useNavigate } from "react-router-dom";
 const ITEMS_PER_PAGE = 20
+
 
 const Container = styled.div`
   min-height: 100vh;
@@ -110,7 +112,6 @@ const ToggleButton = styled.button<{ active?: boolean }>`
   background-color: ${(props) => (props.active ? '#111' : '#e2e8f0')};
   color: ${(props) => (props.active ? '#fff' : '#111')};
   border: none;
-  cursor: pointer;
   transition: background 0.2s;
 
   &:hover {
@@ -118,13 +119,24 @@ const ToggleButton = styled.button<{ active?: boolean }>`
   }
 
   `
-const PaginationView = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+const PaginationView = ({
+  setViewMode,
+}: {
+  setViewMode: (mode: 'pagination' | 'infinite') => void
+}) => {  const [currentPage, setCurrentPage] = useState(1)
   const [pokemonData, setPokemonData] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
+   const navigate = useNavigate();
+
+  const handleSwitch = () => {
+    setViewMode("infinite");
+    navigate("/load-more");
+  };
+
+
 
   useEffect(() => {
       const cachedData = localStorage.getItem('pokemonList')
@@ -171,14 +183,14 @@ const PaginationView = () => {
     setCurrentPage((prev) => prev + 1)
   }
 
-  console.log('Current Page:', pokemonData)
+  
   return (
     <Container>
       <Heading>⚡ Pokédex</Heading>
       <Subheading>Discover and explore Pokémon with page controls</Subheading>
 <ButtonGroup>
-  <ToggleButton active>Page Controls</ToggleButton>
-  <ToggleButton>Infinite Scroll</ToggleButton>
+  <ToggleButton disabled active>Page Controls</ToggleButton>
+  <ToggleButton style={{cursor: 'pointer'}} onClick={handleSwitch}>Infinite Scroll</ToggleButton>
 </ButtonGroup>
 
       {loading && <Loading>Loading...</Loading>}

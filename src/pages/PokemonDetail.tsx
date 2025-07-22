@@ -11,6 +11,9 @@ const Container = styled.div`
   padding: 2rem 1rem;
   display: flex;
   justify-content: center;
+  text-color: black;
+    font-family: 'Roboto', sans-serif;
+
   align-items: flex-start;
 `
 
@@ -28,6 +31,7 @@ const Header = styled.div`
   color: white;
   padding: 1.75rem 1rem;
   text-align: center;
+  font: bold 1.5rem 'Roboto', sans-serif;
 `
 
 const Title = styled.h1`
@@ -40,22 +44,31 @@ const SubTitle = styled.p`
   font-size: 0.875rem;
   opacity: 0.9;
   margin-top: 0.25rem;
+    font: bold 1.5rem 'Roboto', sans-serif;
+
 `
 
 const ImageWrapper = styled.div`
   background: #f3f4f6;
   border-radius: 50%;
-  width: 10rem;
-  height: 10rem;
-  margin: -3rem auto 1rem;
+  width: 15vw;
+  height: 35vh;
   display: flex;
   align-items: center;
   justify-content: center;
+    @media (max-width: 768px) {
+    width: 30vw;
+    height: 30vw;
+  }
 `
 
 const Image = styled.img`
-  width: 7rem;
-  height: 7rem;
+  width: 15vw;
+  height: 33vh;
+      @media (max-width: 768px) {
+    width: 20vw;
+    height: 20vw;
+  }
 `
 
 const Badge = styled.span`
@@ -71,33 +84,55 @@ const Badge = styled.span`
 
 const MetaGrid = styled.div`
   display: flex;
-  justify-content: center;
   gap: 2rem;
   margin: 1rem 0;
 `
 
 const MetaBox = styled.div`
-  background: #f9fafb;
-  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  padding: 0.2srem 1.2rem;
   border-radius: 1rem;
   text-align: center;
-  min-width: 100px;
+  min-width: 5vw;
 `
 
 const MetaLabel = styled.p`
   font-size: 0.75rem;
-  color: #6b7280;
+  font-weight: bold;
+  font-weight: 400;
 `
 
 const MetaValue = styled.p`
   font-weight: bold;
-  color: #111827;
+  color: black;
+    font-size: 1.3rem;
+  font-weight: bold;
+  font-weight: 1300;
 `
 
 const StatContainer = styled.div`
-  margin-top: 2rem;
-  text-align: left;
 `
+const ResponsiveFlex = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  flex-direction: row;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    flexgrow: 1;
+  }
+`;
+
+const PokemonDetials = styled.div`
+  flex-grow: 1;
+    @media (max-width: 768px) {
+    width: 90%;
+  }
+
+    `
+
 
 const StatBar = styled.div`
   background-color: #e5e7eb;
@@ -108,42 +143,51 @@ const StatBar = styled.div`
 `
 
 const StatFill = styled.div<{ width: number }>`
-  background-color: #9c27b0;
+  background-color: black;
   height: 100%;
   border-radius: 9999px;
   width: ${({ width }) => `${width}%`};
 `
 
 const Label = styled.p`
-  font-size: 0.875rem;
+  font-size: 1.3rem;
   font-weight: bold;
-  color: #374151;
+  font-weight: 1300;
+  color: black;
+  font-family: 'Roboto', sans-serif;
   margin-bottom: 0.5rem;
 `
 
 const Value = styled.p`
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 900;
   color: #7e22ce;
 `
 
 const Text = styled.p`
-  font-size: 0.875rem;
+    font-size: 1.1rem;
+  font-weight: bold;
+  font-weight: 1300;
   color: #6b7280;
 `
 
 const BackLink = styled(Link)`
   display: inline-block;
-  margin-top: 2rem;
   font-size: 0.875rem;
+  position: absolute; 
+  top: 1rem;
+  left: 5rem;
   color: #6b7280;
-  background: #e0e7ff;
+  background: white;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   text-decoration: none;
   transition: 0.2s ease;
   &:hover {
     background: #c7d2fe;
+  }
+        @media (max-width: 768px) {
+    display: none;
   }
 `
 
@@ -177,7 +221,7 @@ const PokemonDetail = () => {
 
   if (error)
     return (
-      <div style={{ textAlign: 'center', color: '#ef4444', padding: '1rem' }}>
+      <div style={{ textAlign: 'center', color: 'black',  padding: '1rem' }}>
         <p>{error}</p>
         <button
           onClick={() => window.location.reload()}
@@ -199,14 +243,16 @@ const PokemonDetail = () => {
 
 return (
   <Container>
+            <BackLink to="/">← Back to List</BackLink>
+
     <Card>
       <Header>
         <Title>{pokemon.name}</Title>
         <SubTitle>#{pokemon.id.toString().padStart(3, '0')}</SubTitle>
       </Header>
 
-      <div style={{ padding: '1.5rem', textAlign: 'center', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-        <div style={{flexGrow: 1}}>
+      <ResponsiveFlex style={{ padding: '1.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', }} >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50%'}}>
         <ImageWrapper>
           <Image src={pokemon.sprites.front_default} alt={pokemon.name} />
         </ImageWrapper>
@@ -226,7 +272,7 @@ return (
           </MetaBox>
         </MetaGrid>
 </div>
-        <div style={{flexGrow: 1}}>
+        <PokemonDetials style={{flexGrow: 1}}>
         <StatContainer>
           <Label>Base Stats</Label>
           {pokemon.stats.map((stat: any) => (
@@ -262,7 +308,7 @@ return (
             {pokemon.abilities.map((ab: any) => (
               <li
                 key={ab.ability.name}
-                style={ab.is_hidden ? { fontStyle: 'italic', color: '#9ca3af' } : {}}
+                style={ab.is_hidden ? { fontStyle: 'italic', color: '#9ca3af', fontWeight: '800' } : {}}
               >
                 {ab.ability.name}
               </li>
@@ -270,13 +316,12 @@ return (
           </ul>
         </div>
 
-        <div style={{ marginTop: '1.5rem' }}>
+        <div style={{ marginTop: '1.5rem', fontSize: '1.25rem', fontWeight: '800' }}>
           <Text>Base Experience</Text>
           <Value>{pokemon.base_experience} XP</Value>
         </div>
-        </div>
-</div>
-        <BackLink to="/">← Back to List</BackLink>
+        </PokemonDetials>
+</ResponsiveFlex>
     </Card>
   </Container>
 )
