@@ -1,8 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 
-import React, { Suspense, lazy } from 'react';
+import  { Suspense, lazy } from 'react';
 
-import PokedexPage from './pages/PokedexPage'
 import { useState } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -11,7 +10,8 @@ const LoadMoreView = lazy(() => import('./pages/LoadMoreView'));
 const PokemonDetail = lazy(() => import('./pages/PokemonDetail'));
 
 const App = () => {
-    const [viewMode, setViewMode] = useState<"pagination" | "infinite">("pagination");
+  const [viewMode, setViewMode] = useState<"pagination" | "infinite">("pagination");
+  console.log('App component rendered', viewMode);
 
   return (
         <ErrorBoundary>
